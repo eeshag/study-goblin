@@ -1,38 +1,168 @@
-.App {
-  text-align: center;
+:root {
+  --bg: #0e0f12;
+  --surface: #14161b;
+  --surface-strong: #1b1e25;
+  --text: #f5f7fb;
+  --text-muted: #a9b0bb;
+  --accent: #74b9ff;
+  --border: #262a33;
+  --focus: #91c3ff;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+[data-theme='light'] {
+  --bg: #f6f7fb;
+  --surface: #ffffff;
+  --surface-strong: #f1f3f8;
+  --text: #12141a;
+  --text-muted: #5d6470;
+  --accent: #2563eb;
+  --border: #d7dbe4;
+  --focus: #2563eb;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+body {
+  background: var(--bg);
+  color: var(--text);
 }
 
-.App-header {
-  background-color: #282c34;
+.page {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  gap: 64px;
+  padding: 32px 24px 72px;
+}
+
+.top-nav {
+  display: flex;
   align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  justify-content: space-between;
+  gap: 16px;
 }
 
-.App-link {
-  color: #61dafb;
+.brand {
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  padding: 8px 14px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.theme-toggle:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.theme-icon {
+  font-size: 16px;
+}
+
+.theme-label {
+  text-transform: capitalize;
+}
+
+.main-content {
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+  align-items: center;
+  text-align: center;
+}
+
+.hero h1 {
+  font-size: clamp(32px, 4vw, 48px);
+  margin: 0 0 12px;
+}
+
+.hero-subtitle {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: clamp(15px, 2.2vw, 18px);
+}
+
+.courses {
+  width: min(900px, 100%);
+}
+
+.course-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 18px;
+}
+
+.course-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 18px 20px;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  text-decoration: none;
+  text-align: left;
+  min-height: 120px;
+  transition: transform 0.12s ease, border-color 0.12s ease,
+    background 0.12s ease;
+}
+
+.course-card h2 {
+  font-size: 16px;
+  margin: 0;
+}
+
+.course-card p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+.course-card:hover,
+.course-card:focus-visible {
+  border-color: var(--accent);
+  background: var(--surface-strong);
+  transform: translateY(-2px);
+}
+
+.course-card:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.course-card.disabled {
+  background: var(--surface-strong);
+  color: var(--text-muted);
+  border-color: var(--border);
+  cursor: not-allowed;
+}
+
+.course-card.disabled h2,
+.course-card.disabled p {
+  color: var(--text-muted);
+}
+
+@media (max-width: 640px) {
+  .page {
+    padding: 24px 18px 56px;
   }
-  to {
-    transform: rotate(360deg);
+
+  .theme-label {
+    display: none;
+  }
+
+  .main-content {
+    gap: 36px;
   }
 }
