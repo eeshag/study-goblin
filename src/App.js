@@ -19,19 +19,28 @@ function App() {
     <div className="page">
       <header className="top-nav">
         <div className="brand">Study Goblin</div>
-        <button className="theme-toggle" type="button" onClick={toggleTheme}>
-          <span className="theme-icon" aria-hidden="true">
-            {theme === 'dark' ? '🌙' : '☀️'}
+        <label className="theme-toggle">
+          <span className="theme-label">Theme</span>
+          <span className="theme-icons" aria-hidden="true">
+            <span>🌙</span>
+            <span>☀️</span>
           </span>
-          <span className="theme-label">
-            {theme === 'dark' ? 'Dark' : 'Light'} mode
+          <input
+            className="theme-toggle-input"
+            type="checkbox"
+            checked={theme === 'light'}
+            onChange={toggleTheme}
+            aria-label="Toggle light mode"
+          />
+          <span className="theme-toggle-track" aria-hidden="true">
+            <span className="theme-toggle-thumb" />
           </span>
-        </button>
+        </label>
       </header>
 
       <main className="main-content">
         <section className="hero">
-          <h1>Welcome to Study Goblin</h1>
+          <h1>Welcome to Study Goblin 🧌</h1>
           <p className="hero-subtitle">
             A simple, fast way to review for UC Scout courses.
           </p>

@@ -49,28 +49,67 @@ body {
 .theme-toggle {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-  border-radius: 999px;
-  border: 1px solid var(--border);
-  background: var(--surface);
-  color: var(--text);
-  padding: 8px 14px;
+  gap: 12px;
   font-size: 14px;
   cursor: pointer;
-  transition: border-color 0.15s ease, background 0.15s ease;
-}
-
-.theme-toggle:focus-visible {
-  outline: 2px solid var(--focus);
-  outline-offset: 2px;
-}
-
-.theme-icon {
-  font-size: 16px;
+  user-select: none;
+  position: relative;
 }
 
 .theme-label {
-  text-transform: capitalize;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.theme-icons {
+  display: inline-flex;
+  gap: 6px;
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.theme-toggle-input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.theme-toggle-track {
+  width: 46px;
+  height: 24px;
+  border-radius: 999px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  display: inline-flex;
+  align-items: center;
+  padding: 2px;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.theme-toggle-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  background: var(--text-muted);
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.theme-toggle-input:checked + .theme-toggle-track {
+  background: var(--surface-strong);
+  border-color: var(--accent);
+}
+
+.theme-toggle-input:checked + .theme-toggle-track .theme-toggle-thumb {
+  transform: translateX(22px);
+  background: var(--accent);
+}
+
+.theme-toggle-input:focus-visible + .theme-toggle-track {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
 }
 
 .main-content {
