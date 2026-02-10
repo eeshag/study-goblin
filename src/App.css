@@ -192,6 +192,132 @@ body {
   color: var(--text-muted);
 }
 
+/* AP CSP unit summaries */
+.main-content--ap-csp {
+  align-items: stretch;
+  max-width: min(720px, 100%);
+}
+
+.main-content--ap-csp .units-section {
+  text-align: left;
+}
+
+.units-section {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.units-section-title {
+  font-size: 1.25rem;
+  margin: 0 0 4px;
+  color: var(--text);
+}
+
+.units-section-note {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  margin: 0 0 8px;
+}
+
+.unit-summary {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 20px 24px;
+}
+
+.unit-summary-title {
+  font-size: 1.125rem;
+  margin: 0 0 16px;
+  color: var(--accent);
+}
+
+.unit-concepts {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.concept {
+  margin: 0;
+}
+
+.concept-name {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  margin: 0 0 6px;
+  color: var(--text);
+}
+
+.concept-points {
+  margin: 0;
+  padding-left: 1.25rem;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.concept-points li {
+  margin-bottom: 4px;
+}
+
+.concept-points li:last-child {
+  margin-bottom: 0;
+}
+
+.concept-table-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.comparison-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.comparison-table th,
+.comparison-table td {
+  border: 1px solid var(--border);
+  padding: 6px 8px;
+  text-align: left;
+}
+
+.comparison-table th {
+  background: var(--surface-strong);
+  color: var(--text);
+  font-weight: 600;
+}
+
+.comparison-table td {
+  color: var(--text-muted);
+}
+
+.comparison-table--methods .comparison-table--methods-label {
+  width: 1%;
+  white-space: nowrap;
+  background: var(--surface-strong);
+}
+
+.comparison-table--methods th.comparison-table--methods-label {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.concept-image-wrapper {
+  margin-top: 8px;
+}
+
+.concept-image {
+  display: block;
+  max-width: 100%;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+}
+
 @media (max-width: 640px) {
   .page {
     padding: 24px 18px 56px;
@@ -203,5 +329,9 @@ body {
 
   .main-content {
     gap: 36px;
+  }
+
+  .unit-summary {
+    padding: 16px 18px;
   }
 }
