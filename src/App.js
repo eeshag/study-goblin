@@ -1,5 +1,6 @@
 import React from 'react';
 import './App.css';
+import { PRACTICE_MIDTERM_QUESTIONS } from './practiceMidtermData';
 
 function HomePage() {
   return (
@@ -159,7 +160,6 @@ const AP_CSP_UNITS = [
     title: 'The Internet',
     concepts: [
       { name: 'The Internet Overview', points: ['A global network of connected computers', 'Allows information to be shared worldwide'] },
-      { name: 'History of the Internet', points: ['Started as a research project', 'Expanded into a global system'] },
       { name: 'Internet Systems', points: ['Includes servers, clients, and routers', 'Work together to transmit data'] },
       { name: 'Using HTML to Create a Webpage', points: ['HTML structures content on the web', 'Uses tags for text, images, and links'] },
       { name: 'What is the Internet?', points: ['A network of networks', 'Uses protocols to communicate'] },
@@ -198,10 +198,125 @@ const AP_CSP_UNITS = [
   },
 ];
 
+const READ_ALOUD_HIGHLIGHT_NAME = 'study-goblin-read-aloud';
+
+/** Get start/end character offsets for the word containing charIndex (so we highlight full words). */
+function getWordBoundaries(text, charIndex) {
+  if (!text || charIndex < 0) return { start: 0, end: 0 };
+  const len = text.length;
+  if (charIndex >= len) return { start: len, end: len };
+  const isSpace = (i) => i >= 0 && i < len && /\s/.test(text[i]);
+  const isUpper = (i) => i >= 0 && i < len && /[A-Z]/.test(text[i]);
+  const isLower = (i) => i >= 0 && i < len && /[a-z]/.test(text[i]);
+  let start = charIndex;
+  while (start > 0) {
+    const prev = start - 1;
+    if (isSpace(prev)) break;
+    if (isUpper(prev) && start < len && isLower(start)) break;
+    start = prev;
+  }
+  let end = charIndex;
+  while (end < len) {
+    if (isSpace(end)) break;
+    if (end > 0 && isUpper(end) && isLower(end - 1)) break;
+    end += 1;
+  }
+  return { start, end };
+}
+
+function getRangeByCharOffset(root, startOffset, endOffset) {
+  if (!root) return null;
+  const range = document.createRange();
+  let current = 0;
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+  let node;
+  let startNode, startOffsetInNode, endNode, endOffsetInNode;
+  while ((node = walker.nextNode())) {
+    const len = node.textContent.length;
+    if (startNode === undefined && current + len > startOffset) {
+      startNode = node;
+      startOffsetInNode = Math.min(startOffset - current, len);
+    }
+    if (endNode === undefined && current + len >= endOffset) {
+      endNode = node;
+      endOffsetInNode = Math.min(endOffset - current, len);
+      break;
+    }
+    current += len;
+  }
+  if (!startNode || !endNode) return null;
+  range.setStart(startNode, startOffsetInNode);
+  range.setEnd(endNode, endOffsetInNode);
+  return range;
+}
+
+function clearReadAloudHighlight() {
+  if (typeof CSS !== 'undefined' && CSS.highlights) {
+    CSS.highlights.delete(READ_ALOUD_HIGHLIGHT_NAME);
+  }
+}
+
 function UnitSummary({ unit, title, concepts }) {
+  const contentRef = React.useRef(null);
+  const highlightRef = React.useRef(null);
+  const [speechState, setSpeechState] = React.useState('idle'); // 'idle' | 'speaking' | 'paused'
+
+  const handleReadAloud = () => {
+    if (typeof window === 'undefined' || !window.speechSynthesis) return;
+    const synth = window.speechSynthesis;
+    if (speechState === 'speaking') {
+      synth.pause();
+      setSpeechState('paused');
+      return;
+    }
+    if (speechState === 'paused') {
+      synth.resume();
+      setSpeechState('speaking');
+      return;
+    }
+    const el = contentRef.current;
+    if (!el) return;
+    const text = el.textContent || '';
+    if (!text.trim()) return;
+    synth.cancel();
+    clearReadAloudHighlight();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.onend = () => {
+      clearReadAloudHighlight();
+      setSpeechState('idle');
+    };
+    utterance.onerror = () => {
+      clearReadAloudHighlight();
+      setSpeechState('idle');
+    };
+    utterance.onboundary = (e) => {
+      const root = contentRef.current;
+      if (!root || typeof CSS === 'undefined' || !CSS.highlights) return;
+      const { start, end } = getWordBoundaries(text, e.charIndex);
+      if (start >= end) return;
+      const range = getRangeByCharOffset(root, start, end);
+      if (!range) return;
+      if (!highlightRef.current) highlightRef.current = new (window['Highlight'])();
+      highlightRef.current.clear();
+      highlightRef.current.add(range);
+      CSS.highlights.set(READ_ALOUD_HIGHLIGHT_NAME, highlightRef.current);
+    };
+    synth.speak(utterance);
+    setSpeechState('speaking');
+  };
+
+  React.useEffect(() => {
+    return () => {
+      if (typeof window !== 'undefined' && window.speechSynthesis) window.speechSynthesis.cancel();
+      clearReadAloudHighlight();
+    };
+  }, []);
+
   return (
     <article className="unit-summary">
-      <h3 className="unit-summary-title">Unit {unit}: {title}</h3>
+      <div className="unit-summary-header">
+        <div ref={contentRef} className="unit-summary-content">
+          <h3 className="unit-summary-title">Unit {unit}: {title}</h3>
       <div className="unit-concepts">
         {concepts.map((concept, i) => {
           const isSearchComparison = concept.name === 'Binary Search vs Linear Search';
@@ -409,30 +524,125 @@ function UnitSummary({ unit, title, concepts }) {
           );
         })}
       </div>
+        </div>
+        <button
+          type="button"
+          className="read-aloud-btn"
+          onClick={handleReadAloud}
+          aria-label={speechState === 'speaking' ? 'Pause' : speechState === 'paused' ? 'Resume' : 'Read this unit aloud'}
+        >
+          {speechState === 'speaking' ? 'Pause' : speechState === 'paused' ? 'Resume' : 'Read aloud'}
+        </button>
+      </div>
     </article>
   );
 }
 
+const AP_CSP_NOTICE_KEY = 'study-goblin-ap-csp-notice-dismissed';
+
 function ApCspPage() {
   const semester1 = AP_CSP_UNITS.filter((u) => u.unit >= 2 && u.unit <= 6);
   const semester2 = AP_CSP_UNITS.filter((u) => u.unit >= 9 && u.unit <= 12);
+  const fullPageContentRef = React.useRef(null);
+  const fullPageHighlightRef = React.useRef(null);
+  const [fullPageSpeechState, setFullPageSpeechState] = React.useState('idle');
+  const [noticeDismissed, setNoticeDismissed] = React.useState(() => {
+    try {
+      return localStorage.getItem(AP_CSP_NOTICE_KEY) === 'true';
+    } catch {
+      return false;
+    }
+  });
+
+  const dismissNotice = () => {
+    setNoticeDismissed(true);
+    try {
+      localStorage.setItem(AP_CSP_NOTICE_KEY, 'true');
+    } catch (_) {}
+  };
+
+  const handleFullPageReadAloud = () => {
+    if (typeof window === 'undefined' || !window.speechSynthesis) return;
+    const synth = window.speechSynthesis;
+    if (fullPageSpeechState === 'speaking') {
+      synth.pause();
+      setFullPageSpeechState('paused');
+      return;
+    }
+    if (fullPageSpeechState === 'paused') {
+      synth.resume();
+      setFullPageSpeechState('speaking');
+      return;
+    }
+    const el = fullPageContentRef.current;
+    if (!el) return;
+    const text = el.textContent || '';
+    if (!text.trim()) return;
+    synth.cancel();
+    clearReadAloudHighlight();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.onend = () => {
+      clearReadAloudHighlight();
+      setFullPageSpeechState('idle');
+    };
+    utterance.onerror = () => {
+      clearReadAloudHighlight();
+      setFullPageSpeechState('idle');
+    };
+    utterance.onboundary = (e) => {
+      const root = fullPageContentRef.current;
+      if (!root || typeof CSS === 'undefined' || !CSS.highlights) return;
+      const { start, end } = getWordBoundaries(text, e.charIndex);
+      if (start >= end) return;
+      const range = getRangeByCharOffset(root, start, end);
+      if (!range) return;
+      if (!fullPageHighlightRef.current) fullPageHighlightRef.current = new (window['Highlight'])();
+      fullPageHighlightRef.current.clear();
+      fullPageHighlightRef.current.add(range);
+      CSS.highlights.set(READ_ALOUD_HIGHLIGHT_NAME, fullPageHighlightRef.current);
+    };
+    synth.speak(utterance);
+    setFullPageSpeechState('speaking');
+  };
 
   return (
     <main className="main-content main-content--ap-csp">
+      <div className="ap-csp-top-actions">
+        <a href="/ap-csp/practice-midterm" className="read-aloud-btn practice-midterm-link">
+          Take Practice Midterm (Units 2 & 3)
+        </a>
+        <button
+          type="button"
+          className="read-aloud-btn read-aloud-btn--full-page"
+          onClick={handleFullPageReadAloud}
+          aria-label={fullPageSpeechState === 'speaking' ? 'Pause' : fullPageSpeechState === 'paused' ? 'Resume' : 'Read entire page aloud'}
+        >
+          {fullPageSpeechState === 'speaking' ? 'Pause' : fullPageSpeechState === 'paused' ? 'Resume' : 'Read aloud entire page'}
+        </button>
+      </div>
+
+      {!noticeDismissed && (
+        <div className="ap-csp-notice" role="status">
+          <p className="ap-csp-notice-text">
+            Units that will not be on the midterm or final have been removed to make it easier for you.
+          </p>
+          <button
+            type="button"
+            className="ap-csp-notice-dismiss"
+            onClick={dismissNotice}
+            aria-label="Dismiss message"
+          >
+            ×
+          </button>
+        </div>
+      )}
+
+      <div ref={fullPageContentRef} className="ap-csp-page-content">
       <section className="hero">
         <h1>AP Computer Science Principles (AP CSP)</h1>
         <p className="hero-subtitle">
           Exam-focused concept summaries for UC Scout midterms and finals. Review only—not a replacement for class.
         </p>
-      </section>
-
-      <section className="courses">
-        <div className="course-grid">
-          <a className="course-card" href="/">
-            <h2>← Back to all courses</h2>
-            <p>Pick a different class to study.</p>
-          </a>
-        </div>
       </section>
 
       <section className="units-section">
@@ -450,6 +660,95 @@ function ApCspPage() {
           <UnitSummary key={u.unit} unit={u.unit} title={u.title} concepts={u.concepts} />
         ))}
       </section>
+      </div>
+    </main>
+  );
+}
+
+function PracticeMidtermPage() {
+  const [answers, setAnswers] = React.useState(() => ({}));
+  const [submitted, setSubmitted] = React.useState(false);
+
+  const handleChange = (questionId, optionIndex) => {
+    setAnswers((prev) => ({ ...prev, [questionId]: optionIndex }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setSubmitted(true);
+  };
+
+  const correctCount = PRACTICE_MIDTERM_QUESTIONS.filter(
+    (q) => answers[q.id] === q.correctIndex
+  ).length;
+  const total = PRACTICE_MIDTERM_QUESTIONS.length;
+
+  return (
+    <main className="main-content main-content--ap-csp practice-midterm">
+      <div className="practice-midterm-header">
+        <a className="course-card practice-midterm-back" href="/ap-csp">
+          ← Back to AP CSP
+        </a>
+        <h1 className="practice-midterm-title">Practice Midterm (Units 2 & 3)</h1>
+        <p className="practice-midterm-subtitle">
+          30 multiple choice questions · Units 2 (Algorithms) and 3 (Data)
+        </p>
+      </div>
+
+      {submitted && (
+        <div className="practice-midterm-score" role="status">
+          <strong>Score: {correctCount} / {total}</strong>
+          {correctCount === total ? (
+            <p>Great job!</p>
+          ) : (
+            <p>Review the questions marked below and check the unit summaries.</p>
+          )}
+        </div>
+      )}
+
+      <form onSubmit={handleSubmit} className="practice-midterm-form">
+        <button type="submit" className="read-aloud-btn practice-midterm-submit-btn">
+          Submit answers
+        </button>
+
+        <ol className="practice-midterm-list">
+          {PRACTICE_MIDTERM_QUESTIONS.map((q) => {
+            const isCorrect = answers[q.id] === q.correctIndex;
+            const showWrong = submitted && answers[q.id] !== undefined && !isCorrect;
+            return (
+              <li
+                key={q.id}
+                className={`practice-midterm-item ${showWrong ? 'practice-midterm-item--wrong' : ''}`}
+              >
+                <span className="practice-midterm-q-text">{q.question}</span>
+                <div className="practice-midterm-options" role="group" aria-label={`Question ${q.id} options`}>
+                  {q.options.map((opt, idx) => (
+                    <label key={idx} className="practice-midterm-option">
+                      <input
+                        type="radio"
+                        name={`q-${q.id}`}
+                        checked={answers[q.id] === idx}
+                        onChange={() => handleChange(q.id, idx)}
+                        disabled={submitted}
+                      />
+                      <span>{opt}</span>
+                    </label>
+                  ))}
+                </div>
+                {showWrong && (
+                  <p className="practice-midterm-correct-answer">
+                    Correct: {q.options[q.correctIndex]}
+                  </p>
+                )}
+              </li>
+            );
+          })}
+        </ol>
+
+        <button type="submit" className="read-aloud-btn practice-midterm-submit-btn practice-midterm-submit-btn--bottom">
+          Submit answers
+        </button>
+      </form>
     </main>
   );
 }
@@ -470,11 +769,12 @@ function App() {
 
   const path = window.location.pathname;
   const isApCsp = path === '/ap-csp';
+  const isPracticeMidterm = path === '/ap-csp/practice-midterm';
 
   return (
     <div className="page">
       <header className="top-nav">
-        <div className="brand">Study Goblin</div>
+        <a className="brand" href="/">Study Goblin🧌</a>
         <label className="theme-toggle">
           <span className="theme-label">Theme</span>
           <span className="theme-icons" aria-hidden="true">
@@ -495,7 +795,7 @@ function App() {
       </header>
 
       <main className="main-content">
-        {isApCsp ? <ApCspPage /> : <HomePage />}
+        {isPracticeMidterm ? <PracticeMidtermPage /> : isApCsp ? <ApCspPage /> : <HomePage />}
       </main>
     </div>
   );
