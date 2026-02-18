@@ -1,70 +1,97 @@
-# Getting Started with Create React App
+# Study Goblin 🧠👹
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A simple, fast, and distraction-free way to review for **UC Scout courses**, starting with **AP Computer Science Principles (AP CSP)**.
 
-## Available Scripts
+Study Goblin is built for **high school students** who want to study efficiently without jumping between notes, videos, and random websites—especially when time is tight.
 
-In the project directory, you can run:
+---
 
-### `npm start`
+## Why Study Goblin Exists
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+I built Study Goblin after seeing how stressed my friends were while studying for UC Scout. Everyone was bouncing between different resources—class notes, Google searches, videos, and practice questions—just to prepare for tests.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+The idea was to create **one clean website** with *everything you need in one place*:
+- Short, clear explanations for quick review  
+- Deeper content if you have more time  
+- Plenty of practice if that’s how you learn best  
 
-### `npm test`
+Study Goblin is designed to be **simple**, **easy to navigate**, and genuinely useful whether you’re cramming or doing a full review.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+---
 
-### `npm run build`
+## Features
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+- **Unit-by-unit notes**
+  - Topics explained in simple, student-friendly language
+  - Optimized for fast understanding
+- **Practice questions**
+  - Auto-generated multiple-choice questions
+  - Based on what’s actually taught in UC Scout classes
+- **One-page review sheets**
+  - Condensed notes for **midterms and finals**
+  - Ideal for last-minute studying
+- **Practice final**
+  - Can be taken **timed or untimed**
+- **Optional read-aloud**
+  - Lets students listen to notes if they prefer audio-based studying
+- **Minimal, dark-first UI**
+  - Clean layout with no distractions
+  - Built for focus and speed
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+---
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Courses
 
-### `npm run eject`
+- ✅ **AP Computer Science Principles (AP CSP)**  
+- ➕ More UC Scout courses will be added over time
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+---
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## Design Philosophy
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+- Simple > flashy  
+- Focus > distractions  
+- Speed > unnecessary features  
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+There is **no gamification**, no streaks, and no visual noise.  
+Dark mode is the default, with the option to switch if desired.
 
-## Learn More
+---
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## Tech Stack
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+- **Vercel** (deployment)
+- **Cursor** (development)
+- **No backend**
+- **No accounts or logins**
 
-### Code Splitting
+Everything runs client-side to keep the experience fast and lightweight.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+---
 
-### Analyzing the Bundle Size
+## Project Status
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+🚧 **In progress**  
+🧪 Experimental, personal project  
 
-### Making a Progressive Web App
+Study Goblin is actively being built and improved based on real student needs.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+---
 
-### Advanced Configuration
+## Future Features
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+- Additional UC Scout courses
+- Smarter question generation
+- Improved read-aloud controls
+- More customizable practice modes
+- Downloadable one-page review PDFs
+- Lightweight progress indicators (no accounts)
 
-### Deployment
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+## Who Study Goblin Is For
 
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- UC Scout students
+- Anyone who wants:
+  - A **short, efficient review** when on a time crunch
+  - Or **lots of practice** when studying more deeply

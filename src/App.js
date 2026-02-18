@@ -665,9 +665,96 @@ function ApCspPage() {
   );
 }
 
-function PracticeMidtermPage() {
+const HOUR_SECONDS = 60 * 60;
+const TIMER_RING_RADIUS = 45;
+const TIMER_RING_STROKE = 8;
+const TIMER_RING_CIRCUMFERENCE = 2 * Math.PI * TIMER_RING_RADIUS;
+
+function formatTime(seconds) {
+  const h = Math.floor(seconds / 3600);
+  const m = Math.floor((seconds % 3600) / 60);
+  const s = seconds % 60;
+  return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+}
+
+function PracticeMidtermTimer() {
+  const [timerSeconds, setTimerSeconds] = React.useState(HOUR_SECONDS);
+  const [timerPaused, setTimerPaused] = React.useState(false);
+  const [timerDismissed, setTimerDismissed] = React.useState(false);
+
+  React.useEffect(() => {
+    if (timerPaused || timerDismissed || timerSeconds <= 0) return;
+    const id = setInterval(() => setTimerSeconds((s) => (s <= 0 ? 0 : s - 1)), 1000);
+    return () => clearInterval(id);
+  }, [timerPaused, timerDismissed, timerSeconds]);
+
+  if (timerDismissed) return null;
+
+  const progressFraction = timerSeconds / HOUR_SECONDS;
+  const ringOffset = TIMER_RING_CIRCUMFERENCE * (1 - progressFraction);
+
+  return (
+    <div className="practice-midterm-timer" role="timer" aria-label={`Time remaining: ${formatTime(timerSeconds)}`}>
+      <div className="practice-midterm-timer-ring-wrap">
+        <svg className="practice-midterm-timer-ring" viewBox={`0 0 ${(TIMER_RING_RADIUS + TIMER_RING_STROKE) * 2} ${(TIMER_RING_RADIUS + TIMER_RING_STROKE) * 2}`}>
+          <circle
+            className="practice-midterm-timer-ring-bg"
+            cx={TIMER_RING_RADIUS + TIMER_RING_STROKE}
+            cy={TIMER_RING_RADIUS + TIMER_RING_STROKE}
+            r={TIMER_RING_RADIUS}
+            fill="none"
+            strokeWidth={TIMER_RING_STROKE}
+          />
+          <circle
+            className="practice-midterm-timer-ring-progress"
+            cx={TIMER_RING_RADIUS + TIMER_RING_STROKE}
+            cy={TIMER_RING_RADIUS + TIMER_RING_STROKE}
+            r={TIMER_RING_RADIUS}
+            fill="none"
+            strokeWidth={TIMER_RING_STROKE}
+            strokeDasharray={TIMER_RING_CIRCUMFERENCE}
+            strokeDashoffset={ringOffset}
+            transform={`rotate(-90 ${TIMER_RING_RADIUS + TIMER_RING_STROKE} ${TIMER_RING_RADIUS + TIMER_RING_STROKE})`}
+          />
+        </svg>
+        <span className="practice-midterm-timer-display">{formatTime(timerSeconds)}</span>
+      </div>
+      <div className="practice-midterm-timer-actions">
+        <button
+          type="button"
+          className="practice-midterm-timer-btn practice-midterm-timer-btn--play"
+          onClick={() => setTimerPaused((p) => !p)}
+          aria-label={timerPaused ? 'Resume timer' : 'Pause timer'}
+        >
+          {timerPaused ? (
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+              <path d="M8 5v14l11-7L8 5z" />
+            </svg>
+          ) : (
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+              <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z" />
+            </svg>
+          )}
+        </button>
+        <button
+          type="button"
+          className="practice-midterm-timer-btn practice-midterm-timer-btn--reset"
+          onClick={() => setTimerDismissed(true)}
+          aria-label="Dismiss timer"
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+            <path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function PracticeMidtermPage({ onRedo }) {
   const [answers, setAnswers] = React.useState(() => ({}));
   const [submitted, setSubmitted] = React.useState(false);
+  const [expandedExplanation, setExpandedExplanation] = React.useState(null);
 
   const handleChange = (questionId, optionIndex) => {
     setAnswers((prev) => ({ ...prev, [questionId]: optionIndex }));
@@ -678,6 +765,10 @@ function PracticeMidtermPage() {
     setSubmitted(true);
   };
 
+  const toggleExplanation = (questionId) => {
+    setExpandedExplanation((prev) => (prev === questionId ? null : questionId));
+  };
+
   const correctCount = PRACTICE_MIDTERM_QUESTIONS.filter(
     (q) => answers[q.id] === q.correctIndex
   ).length;
@@ -686,12 +777,9 @@ function PracticeMidtermPage() {
   return (
     <main className="main-content main-content--ap-csp practice-midterm">
       <div className="practice-midterm-header">
-        <a className="course-card practice-midterm-back" href="/ap-csp">
-          ← Back to AP CSP
-        </a>
         <h1 className="practice-midterm-title">Practice Midterm (Units 2 & 3)</h1>
         <p className="practice-midterm-subtitle">
-          30 multiple choice questions · Units 2 (Algorithms) and 3 (Data)
+          30 multiple choice questions · Units 2 (Algorithms) and 3 (Data) · 60 minute test (optional timer)
         </p>
       </div>
 
@@ -707,9 +795,18 @@ function PracticeMidtermPage() {
       )}
 
       <form onSubmit={handleSubmit} className="practice-midterm-form">
-        <button type="submit" className="read-aloud-btn practice-midterm-submit-btn">
-          Submit answers
-        </button>
+        <div className="practice-midterm-form-actions">
+          <button type="submit" className="read-aloud-btn practice-midterm-submit-btn">
+            Submit answers
+          </button>
+          <button
+            type="button"
+            className="read-aloud-btn practice-midterm-redo-btn--secondary"
+            onClick={onRedo}
+          >
+            Redo
+          </button>
+        </div>
 
         <ol className="practice-midterm-list">
           {PRACTICE_MIDTERM_QUESTIONS.map((q) => {
@@ -736,9 +833,26 @@ function PracticeMidtermPage() {
                   ))}
                 </div>
                 {showWrong && (
-                  <p className="practice-midterm-correct-answer">
-                    Correct: {q.options[q.correctIndex]}
-                  </p>
+                  <div className="practice-midterm-wrong-footer">
+                    <p className="practice-midterm-correct-answer">
+                      Correct: {q.options[q.correctIndex]}
+                    </p>
+                    {q.explanation && (
+                      <>
+                        <button
+                          type="button"
+                          className="practice-midterm-explain-btn"
+                          onClick={() => toggleExplanation(q.id)}
+                          aria-expanded={expandedExplanation === q.id}
+                        >
+                          {expandedExplanation === q.id ? 'Hide explanation' : 'Why is this correct?'}
+                        </button>
+                        {expandedExplanation === q.id && (
+                          <p className="practice-midterm-explanation">{q.explanation}</p>
+                        )}
+                      </>
+                    )}
+                  </div>
                 )}
               </li>
             );
@@ -770,12 +884,23 @@ function App() {
   const path = window.location.pathname;
   const isApCsp = path === '/ap-csp';
   const isPracticeMidterm = path === '/ap-csp/practice-midterm';
+  const [practiceMidtermKey, setPracticeMidtermKey] = React.useState(0);
+
+  const handlePracticeMidtermRedo = () => {
+    setPracticeMidtermKey((k) => k + 1);
+  };
 
   return (
-    <div className="page">
+    <div className={`page${isPracticeMidterm ? ' page--practice-midterm' : ''}`}>
       <header className="top-nav">
-        <a className="brand" href="/">Study Goblin🧌</a>
-        <label className="theme-toggle">
+        <div className="top-nav-left">
+          <a className="brand" href="/">Study Goblin🧌</a>
+          {isPracticeMidterm && (
+            <a className="practice-midterm-back" href="/ap-csp">← Back to AP CSP</a>
+          )}
+        </div>
+        <div className="top-nav-right">
+          <label className="theme-toggle">
           <span className="theme-label">Theme</span>
           <span className="theme-icons" aria-hidden="true">
             <span>🌙</span>
@@ -792,10 +917,18 @@ function App() {
             <span className="theme-toggle-thumb" />
           </span>
         </label>
+          {isPracticeMidterm && <PracticeMidtermTimer key={practiceMidtermKey} />}
+        </div>
       </header>
 
       <main className="main-content">
-        {isPracticeMidterm ? <PracticeMidtermPage /> : isApCsp ? <ApCspPage /> : <HomePage />}
+        {isPracticeMidterm ? (
+          <PracticeMidtermPage key={practiceMidtermKey} onRedo={handlePracticeMidtermRedo} />
+        ) : isApCsp ? (
+          <ApCspPage />
+        ) : (
+          <HomePage />
+        )}
       </main>
     </div>
   );
