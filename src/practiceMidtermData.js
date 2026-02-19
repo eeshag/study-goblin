@@ -5,6 +5,7 @@ export const PRACTICE_MIDTERM_QUESTIONS = [
     question: 'Which part of computational thinking involves breaking a large problem into smaller, manageable pieces?',
     options: ['Decomposition', 'Pattern recognition', 'Abstraction', 'Algorithm design'],
     correctIndex: 0,
+    topic: 'Computational Thinking',
     explanation: 'Decomposition is the computational thinking skill of breaking a large problem into smaller, manageable subproblems. This makes complex tasks easier to understand and solve step by step.',
   },
   {
@@ -12,6 +13,7 @@ export const PRACTICE_MIDTERM_QUESTIONS = [
     question: 'Finding similarities and trends in problems or data is called:',
     options: ['Decomposition', 'Pattern recognition', 'Abstraction', 'Algorithm design'],
     correctIndex: 1,
+    topic: 'Computational Thinking',
     explanation: 'Pattern recognition is identifying similarities and trends in problems or data. Once you spot patterns, you can reuse solutions or predict what comes next.',
   },
   {
@@ -19,6 +21,7 @@ export const PRACTICE_MIDTERM_QUESTIONS = [
     question: 'Removing unnecessary details to focus on the main idea is known as:',
     options: ['Decomposition', 'Pattern recognition', 'Abstraction', 'Algorithm design'],
     correctIndex: 2,
+    topic: 'Computational Thinking',
     explanation: 'Abstraction means hiding or removing unnecessary details so you can focus on the important parts. It makes complex systems easier to understand and work with.',
   },
   {
@@ -26,6 +29,7 @@ export const PRACTICE_MIDTERM_QUESTIONS = [
     question: 'An algorithm must be:',
     options: ['Ordered, specific, and finite', 'Short and simple', 'Written in code', 'Approximate'],
     correctIndex: 0,
+    topic: 'Algorithms',
     explanation: 'An algorithm is a clear set of instructions. It must be ordered (steps have a defined sequence), specific (each step is unambiguous), and finite (it eventually stops).',
   },
   {
@@ -33,6 +37,7 @@ export const PRACTICE_MIDTERM_QUESTIONS = [
     question: 'Pseudocode is best described as:',
     options: ['Code that runs on a special computer', 'Writing code logic in plain English', 'A type of flowchart', 'Binary instructions'],
     correctIndex: 1,
+    topic: 'Pseudocode',
     explanation: 'Pseudocode uses plain English (or a mix of English and code-like terms) to describe the logic of a program. It helps you plan without worrying about exact syntax.',
   },
   {
@@ -40,6 +45,7 @@ export const PRACTICE_MIDTERM_QUESTIONS = [
     question: 'Flowcharts are used to:',
     options: ['Store data', 'Show the steps of an algorithm visually', 'Compress files', 'Search databases'],
     correctIndex: 1,
+    topic: 'Flowcharts',
     explanation: 'Flowcharts are visual diagrams that show the steps, decisions, and flow of an algorithm. They use shapes (rectangles for actions, diamonds for decisions) to represent the logic.',
   },
   {
@@ -47,6 +53,7 @@ export const PRACTICE_MIDTERM_QUESTIONS = [
     question: 'Which number system do computers use to store all data?',
     options: ['Decimal (base 10)', 'Binary (base 2)', 'Hexadecimal', 'ASCII'],
     correctIndex: 1,
+    topic: 'Binary',
     explanation: 'Computers store all data as binary (0s and 1s) because digital circuits can only reliably represent two states: on or off. Text, numbers, images, and sound are all converted to binary.',
   },
   {
@@ -54,6 +61,7 @@ export const PRACTICE_MIDTERM_QUESTIONS = [
     question: 'In the binary number system, each digit represents a power of:',
     options: ['10', '2', '8', '16'],
     correctIndex: 1,
+    topic: 'Binary',
     explanation: 'Binary is base-2, so each digit (bit) represents a power of 2. For example, 101 in binary = 1×2² + 0×2¹ + 1×2⁰ = 5 in decimal.',
   },
   {
@@ -61,6 +69,7 @@ export const PRACTICE_MIDTERM_QUESTIONS = [
     question: 'Linear search checks items:',
     options: ['In random order', 'One by one', 'By splitting the list in half', 'Only in sorted lists'],
     correctIndex: 1,
+    topic: 'Search Algorithms',
     explanation: 'Linear search goes through items one by one from the start until it finds the target (or reaches the end). It does not require the list to be sorted.',
   },
   {
@@ -68,6 +77,7 @@ export const PRACTICE_MIDTERM_QUESTIONS = [
     question: 'Binary search requires the data to be:',
     options: ['Unsorted', 'Sorted', 'Compressed', 'Encrypted'],
     correctIndex: 1,
+    topic: 'Search Algorithms',
     explanation: 'Binary search repeatedly splits the list in half and compares the middle item to the target. This only works correctly when the data is sorted, so it knows which half to search next.',
   },
   {
@@ -75,6 +85,7 @@ export const PRACTICE_MIDTERM_QUESTIONS = [
     question: 'Which search is generally faster on large, sorted data sets?',
     options: ['Linear search', 'Binary search', 'They are the same speed', 'Neither'],
     correctIndex: 1,
+    topic: 'Search Algorithms',
     explanation: 'Binary search cuts the search space in half each time, so it finds items in roughly log₂(n) steps. Linear search may need to check every item, making it slower on large data sets.',
   },
   {
@@ -82,6 +93,7 @@ export const PRACTICE_MIDTERM_QUESTIONS = [
     question: 'ASCII is a system that:',
     options: ['Compresses files', 'Assigns numbers to letters and symbols', 'Searches databases', 'Draws flowcharts'],
     correctIndex: 1,
+    topic: 'ASCII',
     explanation: 'ASCII (American Standard Code for Information Interchange) assigns a unique number to each letter, digit, and common symbol so text can be stored and transmitted digitally as numbers.',
   },
   {
@@ -89,6 +101,7 @@ export const PRACTICE_MIDTERM_QUESTIONS = [
     question: 'Lossless compression means:',
     options: ['Some data is permanently removed', 'You get exactly the original data back when you decompress', 'Files are always larger', 'Quality is reduced'],
     correctIndex: 1,
+    topic: 'Data Compression',
     explanation: 'Lossless compression reduces file size without losing any data. When you decompress, you get back exactly what you had before, bit-for-bit. Good for text and code.',
   },
   {
@@ -96,6 +109,7 @@ export const PRACTICE_MIDTERM_QUESTIONS = [
     question: 'Lossy compression is often used for:',
     options: ['Text and code', 'Photos, music, and video', 'Databases', 'Spreadsheets'],
     correctIndex: 1,
+    topic: 'Data Compression',
     explanation: 'Lossy compression discards some data to achieve smaller files. For photos, music, and video, small quality losses are often acceptable in exchange for much smaller file sizes.',
   },
   {
@@ -103,6 +117,7 @@ export const PRACTICE_MIDTERM_QUESTIONS = [
     question: 'Data abstraction helps:',
     options: ['Delete data', 'Simplify data to highlight important patterns', 'Copy files', 'Send email'],
     correctIndex: 1,
+    topic: 'Data Abstraction',
     explanation: 'Data abstraction simplifies complex data by focusing on the important patterns and hiding unnecessary details. It makes large data sets easier to manage and understand.',
   },
   {
@@ -110,6 +125,7 @@ export const PRACTICE_MIDTERM_QUESTIONS = [
     question: 'Tools used to store and manage data include:',
     options: ['Flowcharts only', 'Databases and spreadsheets', 'Pseudocode', 'Binary only'],
     correctIndex: 1,
+    topic: 'Data Overview',
     explanation: 'Databases and spreadsheets are common tools for storing, organizing, and managing data. They let you add, update, search, and analyze data efficiently.',
   },
   {
@@ -117,6 +133,7 @@ export const PRACTICE_MIDTERM_QUESTIONS = [
     question: 'Sorting data can make searching:',
     options: ['Slower', 'Faster', 'Impossible', 'Unnecessary'],
     correctIndex: 1,
+    topic: 'Search & Sorting',
     explanation: 'Sorted data allows algorithms like binary search to work, which is much faster than linear search on large data sets. Sorting is often worth the upfront cost.',
   },
   {
@@ -124,6 +141,7 @@ export const PRACTICE_MIDTERM_QUESTIONS = [
     question: 'Digital data representation means all data is stored using:',
     options: ['Letters', '0s and 1s (binary)', 'Colors', 'Sounds'],
     correctIndex: 1,
+    topic: 'Binary',
     explanation: 'Digital representation means everything—text, numbers, images, sound—is ultimately stored as combinations of 0s and 1s (binary) that computers can process.',
   },
   {
@@ -131,6 +149,7 @@ export const PRACTICE_MIDTERM_QUESTIONS = [
     question: 'Creating clear, step-by-step instructions to solve a problem is part of:',
     options: ['Decomposition only', 'Pattern recognition only', 'Algorithm design', 'Data compression'],
     correctIndex: 2,
+    topic: 'Computational Thinking',
     explanation: 'Algorithm design is the computational thinking skill of creating clear, ordered, step-by-step instructions to solve a problem. It turns your plan into an executable procedure.',
   },
   {
@@ -138,6 +157,7 @@ export const PRACTICE_MIDTERM_QUESTIONS = [
     question: 'A flowchart uses shapes to represent:',
     options: ['Only numbers', 'Actions and decisions', 'Only text', 'Binary code'],
     correctIndex: 1,
+    topic: 'Flowcharts',
     explanation: 'Flowcharts use different shapes for different purposes: rectangles typically represent actions/processes, and diamonds represent decisions. This creates a visual map of the algorithm.',
   },
   {
@@ -145,6 +165,7 @@ export const PRACTICE_MIDTERM_QUESTIONS = [
     question: 'Data can be:',
     options: ['Numbers only', 'Numbers, text, images, or sound', 'Only text', 'Only images'],
     correctIndex: 1,
+    topic: 'Data Overview',
     explanation: 'Data is information collected for analysis or decision-making. It can take many forms: numbers, text, images, sound, and more. All are ultimately stored digitally.',
   },
   {
@@ -152,6 +173,7 @@ export const PRACTICE_MIDTERM_QUESTIONS = [
     question: 'Smaller files after compression:',
     options: ['Always lose quality', 'Save space and can transmit faster', 'Cannot be opened', 'Are always lossy'],
     correctIndex: 1,
+    topic: 'Data Compression',
     explanation: 'Compressed files are smaller, which saves storage space and allows faster transmission over networks. Lossless compression achieves this without quality loss; lossy may sacrifice some quality.',
   },
   {
@@ -159,6 +181,7 @@ export const PRACTICE_MIDTERM_QUESTIONS = [
     question: 'Binary search repeatedly:',
     options: ['Checks the first item only', 'Splits the list in half', 'Scans every item', 'Randomly picks items'],
     correctIndex: 1,
+    topic: 'Search Algorithms',
     explanation: 'Binary search works by repeatedly dividing the search space in half. It checks the middle item, then searches only the half where the target could be. This continues until the item is found or the search space is empty.',
   },
   {
@@ -166,6 +189,7 @@ export const PRACTICE_MIDTERM_QUESTIONS = [
     question: 'Pseudocode helps you plan programs without worrying about:',
     options: ['Logic', 'Syntax (exact code rules)', 'Algorithms', 'Data'],
     correctIndex: 1,
+    topic: 'Pseudocode',
     explanation: 'Pseudocode focuses on the logic and flow of your program, not the exact syntax (spelling, punctuation, and rules) of a specific programming language. You can translate it to real code later.',
   },
   {
@@ -173,6 +197,7 @@ export const PRACTICE_MIDTERM_QUESTIONS = [
     question: 'Which is true about linear search?',
     options: ['It requires sorted data', 'It does NOT require sorted data', 'It is always faster than binary search', 'It splits the list in half'],
     correctIndex: 1,
+    topic: 'Search Algorithms',
     explanation: 'Linear search checks items one by one from the beginning, so it works on any list—sorted or unsorted. Unlike binary search, it does not need the data to be in order.',
   },
   {
@@ -180,6 +205,7 @@ export const PRACTICE_MIDTERM_QUESTIONS = [
     question: 'Data compression can be:',
     options: ['Only lossless', 'Only lossy', 'Lossless or lossy', 'Neither'],
     correctIndex: 2,
+    topic: 'Data Compression',
     explanation: 'There are two main types of compression. Lossless preserves all data (good for text/code). Lossy discards some data for smaller files (good for media). The right choice depends on the use case.',
   },
   {
@@ -187,6 +213,7 @@ export const PRACTICE_MIDTERM_QUESTIONS = [
     question: 'Abstraction makes complex systems:',
     options: ['Harder to understand', 'Easier to understand', 'Faster to run', 'Larger'],
     correctIndex: 1,
+    topic: 'Computational Thinking',
     explanation: 'Abstraction hides unnecessary details and highlights what matters. By focusing on the big picture instead of every small detail, complex systems become easier to understand and work with.',
   },
   {
@@ -194,6 +221,7 @@ export const PRACTICE_MIDTERM_QUESTIONS = [
     question: 'Tradeoffs between quality and size exist in:',
     options: ['Only lossless compression', 'Data compression and storage', 'Binary search only', 'Flowcharts'],
     correctIndex: 1,
+    topic: 'Data Compression',
     explanation: 'When compressing and storing data, you often face tradeoffs: smaller files may mean lower quality (lossy), while preserving full quality may mean larger files. The right choice depends on your needs.',
   },
   {
@@ -201,6 +229,7 @@ export const PRACTICE_MIDTERM_QUESTIONS = [
     question: 'An algorithm is a:',
     options: ['Random set of steps', 'Clear set of instructions to solve a problem', 'Type of data', 'Compression method'],
     correctIndex: 1,
+    topic: 'Algorithms',
     explanation: 'An algorithm is a clear, ordered set of instructions to solve a problem. It must be specific, unambiguous, and finite—not random. Recipes, directions, and search methods are examples of algorithms.',
   },
   {
@@ -208,6 +237,7 @@ export const PRACTICE_MIDTERM_QUESTIONS = [
     question: 'Searching finds data; sorting:',
     options: ['Deletes data', 'Organizes data to make searching faster', 'Compresses data', 'Encrypts data'],
     correctIndex: 1,
+    topic: 'Search & Sorting',
     explanation: 'Sorting puts data in a specific order (e.g., alphabetical or numerical). Once sorted, you can use faster search algorithms like binary search. So sorting organizes data to enable more efficient searching.',
   },
 ];

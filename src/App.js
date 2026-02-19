@@ -1,6 +1,9 @@
 import React from 'react';
 import './App.css';
 import { PRACTICE_MIDTERM_QUESTIONS } from './practiceMidtermData';
+import { PRACTICE_MIDTERM_2_QUESTIONS } from './practiceMidterm2Data';
+import { PRACTICE_SEMESTER_1_QUESTIONS } from './practiceSemester1Data';
+import { PRACTICE_SEMESTER_2_QUESTIONS } from './practiceSemester2Data';
 
 function HomePage() {
   return (
@@ -607,20 +610,6 @@ function ApCspPage() {
 
   return (
     <main className="main-content main-content--ap-csp">
-      <div className="ap-csp-top-actions">
-        <a href="/ap-csp/practice-midterm" className="read-aloud-btn practice-midterm-link">
-          Take Practice Midterm (Units 2 & 3)
-        </a>
-        <button
-          type="button"
-          className="read-aloud-btn read-aloud-btn--full-page"
-          onClick={handleFullPageReadAloud}
-          aria-label={fullPageSpeechState === 'speaking' ? 'Pause' : fullPageSpeechState === 'paused' ? 'Resume' : 'Read entire page aloud'}
-        >
-          {fullPageSpeechState === 'speaking' ? 'Pause' : fullPageSpeechState === 'paused' ? 'Resume' : 'Read aloud entire page'}
-        </button>
-      </div>
-
       {!noticeDismissed && (
         <div className="ap-csp-notice" role="status">
           <p className="ap-csp-notice-text">
@@ -643,11 +632,35 @@ function ApCspPage() {
         <p className="hero-subtitle">
           Exam-focused concept summaries for UC Scout midterms and finals. Review only—not a replacement for class.
         </p>
+        <div className="ap-csp-practice-links">
+          <a href="/ap-csp/practice-midterm" className="read-aloud-btn practice-midterm-link">
+            Practice Midterm 1 (Units 2 & 3)
+          </a>
+          <a href="/ap-csp/practice-semester-1" className="read-aloud-btn practice-midterm-link">
+            Semester 1 Practice Exam (Units 2–6)
+          </a>
+          <a href="/ap-csp/practice-midterm-2" className="read-aloud-btn practice-midterm-link">
+            Practice Midterm 2 (Units 9, 10 & 11)
+          </a>
+          <a href="/ap-csp/practice-semester-2" className="read-aloud-btn practice-midterm-link">
+            Semester 2 Final Practice Exam (Units 9–12)
+          </a>
+        </div>
       </section>
 
       <section className="units-section">
         <h2 className="units-section-title">Semester 1 · Units 2–6</h2>
         <p className="units-section-note">Midterm: 2, 3, 4 · Final: 2, 3, 4, 5, 6</p>
+        <div className="units-section-actions">
+          <button
+            type="button"
+            className="read-aloud-btn read-aloud-btn--full-page"
+            onClick={handleFullPageReadAloud}
+            aria-label={fullPageSpeechState === 'speaking' ? 'Pause' : fullPageSpeechState === 'paused' ? 'Resume' : 'Read entire page aloud'}
+          >
+            {fullPageSpeechState === 'speaking' ? 'Pause' : fullPageSpeechState === 'paused' ? 'Resume' : 'Read aloud entire page'}
+          </button>
+        </div>
         {semester1.map((u) => (
           <UnitSummary key={u.unit} unit={u.unit} title={u.title} concepts={u.concepts} />
         ))}
@@ -677,20 +690,25 @@ function formatTime(seconds) {
   return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
 }
 
-function PracticeMidtermTimer() {
-  const [timerSeconds, setTimerSeconds] = React.useState(HOUR_SECONDS);
+function PracticeMidtermTimer({
+  initialSeconds = HOUR_SECONDS,
+  externalPaused = false,
+  timerSeconds,
+  setTimerSeconds,
+  timerDismissed,
+  setTimerDismissed,
+}) {
   const [timerPaused, setTimerPaused] = React.useState(false);
-  const [timerDismissed, setTimerDismissed] = React.useState(false);
 
   React.useEffect(() => {
-    if (timerPaused || timerDismissed || timerSeconds <= 0) return;
+    if (timerPaused || timerDismissed || externalPaused || timerSeconds <= 0) return;
     const id = setInterval(() => setTimerSeconds((s) => (s <= 0 ? 0 : s - 1)), 1000);
     return () => clearInterval(id);
-  }, [timerPaused, timerDismissed, timerSeconds]);
+  }, [timerPaused, timerDismissed, externalPaused, timerSeconds, setTimerSeconds]);
 
   if (timerDismissed) return null;
 
-  const progressFraction = timerSeconds / HOUR_SECONDS;
+  const progressFraction = timerSeconds / initialSeconds;
   const ringOffset = TIMER_RING_CIRCUMFERENCE * (1 - progressFraction);
 
   return (
@@ -739,11 +757,11 @@ function PracticeMidtermTimer() {
         <button
           type="button"
           className="practice-midterm-timer-btn practice-midterm-timer-btn--reset"
-          onClick={() => setTimerDismissed(true)}
+          onClick={() => setTimerDismissed?.(true)}
           aria-label="Dismiss timer"
         >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
-            <path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z" />
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden>
+            <path d="M18 6L6 18M6 6l12 12" />
           </svg>
         </button>
       </div>
@@ -751,10 +769,17 @@ function PracticeMidtermTimer() {
   );
 }
 
-function PracticeMidtermPage({ onRedo }) {
+function PracticeMidtermPage({ questions, title, subtitle, onRedo, onSubmitted, showTimerSummary, timerMinutesSpent, timerMinutesLeft }) {
   const [answers, setAnswers] = React.useState(() => ({}));
   const [submitted, setSubmitted] = React.useState(false);
   const [expandedExplanation, setExpandedExplanation] = React.useState(null);
+  const [showTopicAnalysis, setShowTopicAnalysis] = React.useState(false);
+
+  React.useEffect(() => {
+    if (submitted) {
+      window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+    }
+  }, [submitted]);
 
   const handleChange = (questionId, optionIndex) => {
     setAnswers((prev) => ({ ...prev, [questionId]: optionIndex }));
@@ -763,53 +788,91 @@ function PracticeMidtermPage({ onRedo }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     setSubmitted(true);
+    onSubmitted?.();
   };
 
   const toggleExplanation = (questionId) => {
     setExpandedExplanation((prev) => (prev === questionId ? null : questionId));
   };
 
-  const correctCount = PRACTICE_MIDTERM_QUESTIONS.filter(
+  const correctCount = questions.filter(
     (q) => answers[q.id] === q.correctIndex
   ).length;
-  const total = PRACTICE_MIDTERM_QUESTIONS.length;
+  const total = questions.length;
+  const POINTS_PER_QUESTION = 4;
+  const totalPoints = total * POINTS_PER_QUESTION;
+  const pointsEarned = correctCount * POINTS_PER_QUESTION;
+  const percentage = total > 0 ? Math.round((pointsEarned / totalPoints) * 100) : 0;
+
+  const wrongByTopic = React.useMemo(() => {
+    const map = {};
+    questions.forEach((q) => {
+      const isWrong = submitted && answers[q.id] !== undefined && answers[q.id] !== q.correctIndex;
+      if (isWrong && q.topic) {
+        map[q.topic] = (map[q.topic] || 0) + 1;
+      }
+    });
+    return Object.entries(map)
+      .sort((a, b) => b[1] - a[1])
+      .map(([topic, count]) => ({ topic, count }));
+  }, [submitted, answers, questions]);
 
   return (
     <main className="main-content main-content--ap-csp practice-midterm">
       <div className="practice-midterm-header">
-        <h1 className="practice-midterm-title">Practice Midterm (Units 2 & 3)</h1>
-        <p className="practice-midterm-subtitle">
-          30 multiple choice questions · Units 2 (Algorithms) and 3 (Data) · 60 minute test (optional timer)
-        </p>
+        <h1 className="practice-midterm-title">{title}</h1>
+        <p className="practice-midterm-subtitle">{subtitle}</p>
       </div>
 
       {submitted && (
         <div className="practice-midterm-score" role="status">
-          <strong>Score: {correctCount} / {total}</strong>
+          <strong>Score: {pointsEarned} / {totalPoints} ({percentage}%)</strong>
+          {showTimerSummary && (
+            <p className="practice-midterm-timer-summary">
+              You spent {timerMinutesSpent} minute{timerMinutesSpent !== 1 ? 's' : ''} on the test and had {timerMinutesLeft} minute{timerMinutesLeft !== 1 ? 's' : ''} left over.
+            </p>
+          )}
           {correctCount === total ? (
             <p>Great job!</p>
           ) : (
             <p>Review the questions marked below and check the unit summaries.</p>
           )}
+          <button
+            type="button"
+            className="practice-midterm-analysis-btn"
+            onClick={() => setShowTopicAnalysis((s) => !s)}
+            aria-expanded={showTopicAnalysis}
+          >
+            {showTopicAnalysis ? 'Hide' : 'Show'} topics to review
+          </button>
+          {showTopicAnalysis && (
+            <div className="practice-midterm-topic-analysis">
+              {wrongByTopic.length > 0 ? (
+                <>
+                  <p className="practice-midterm-topic-analysis-intro">Based on your wrong answers:</p>
+                  <ul className="practice-midterm-topic-list">
+                    {wrongByTopic.map(({ topic, count }) => (
+                      <li key={topic}>
+                        <strong>{topic}</strong>
+                        {count > 1 && ` (${count} questions missed)`}
+                      </li>
+                    ))}
+                  </ul>
+                  <p className="practice-midterm-topic-analysis-tip">
+                    Review the unit summaries for these topics to strengthen your understanding.
+                  </p>
+                </>
+              ) : (
+                <p>You got all questions correct—great job!</p>
+              )}
+            </div>
+          )}
         </div>
       )}
 
       <form onSubmit={handleSubmit} className="practice-midterm-form">
-        <div className="practice-midterm-form-actions">
-          <button type="submit" className="read-aloud-btn practice-midterm-submit-btn">
-            Submit answers
-          </button>
-          <button
-            type="button"
-            className="read-aloud-btn practice-midterm-redo-btn--secondary"
-            onClick={onRedo}
-          >
-            Redo
-          </button>
-        </div>
-
         <ol className="practice-midterm-list">
-          {PRACTICE_MIDTERM_QUESTIONS.map((q) => {
+          {questions.map((q) => {
             const isCorrect = answers[q.id] === q.correctIndex;
             const showWrong = submitted && answers[q.id] !== undefined && !isCorrect;
             return (
@@ -859,9 +922,18 @@ function PracticeMidtermPage({ onRedo }) {
           })}
         </ol>
 
-        <button type="submit" className="read-aloud-btn practice-midterm-submit-btn practice-midterm-submit-btn--bottom">
-          Submit answers
-        </button>
+        <div className="practice-midterm-form-actions">
+          <button type="submit" className="read-aloud-btn practice-midterm-submit-btn practice-midterm-submit-btn--bottom">
+            Submit answers
+          </button>
+          <button
+            type="button"
+            className="read-aloud-btn practice-midterm-redo-btn--secondary"
+            onClick={onRedo}
+          >
+            Redo
+          </button>
+        </div>
       </form>
     </main>
   );
@@ -883,11 +955,28 @@ function App() {
 
   const path = window.location.pathname;
   const isApCsp = path === '/ap-csp';
-  const isPracticeMidterm = path === '/ap-csp/practice-midterm';
+  const isPracticeMidterm = path === '/ap-csp/practice-midterm' || path === '/ap-csp/practice-midterm-2' || path === '/ap-csp/practice-semester-1' || path === '/ap-csp/practice-semester-2';
+  const isPracticeMidterm2 = path === '/ap-csp/practice-midterm-2';
+  const isPracticeSemester1 = path === '/ap-csp/practice-semester-1';
+  const isPracticeSemester2 = path === '/ap-csp/practice-semester-2';
+  const practiceTimerSeconds = (isPracticeSemester1 || isPracticeSemester2) ? 80 * 60 : 60 * 60;
   const [practiceMidtermKey, setPracticeMidtermKey] = React.useState(0);
+  const [practiceExamSubmitted, setPracticeExamSubmitted] = React.useState(false);
+  const [timerSeconds, setTimerSeconds] = React.useState(() =>
+    path === '/ap-csp/practice-semester-1' || path === '/ap-csp/practice-semester-2' ? 80 * 60 : path === '/ap-csp/practice-midterm' || path === '/ap-csp/practice-midterm-2' ? 60 * 60 : 0
+  );
+  const [timerDismissed, setTimerDismissed] = React.useState(false);
+
+  React.useEffect(() => {
+    if (isPracticeMidterm) {
+      setTimerSeconds(practiceTimerSeconds);
+      setTimerDismissed(false);
+    }
+  }, [isPracticeMidterm, practiceMidtermKey, practiceTimerSeconds]);
 
   const handlePracticeMidtermRedo = () => {
     setPracticeMidtermKey((k) => k + 1);
+    setPracticeExamSubmitted(false);
   };
 
   return (
@@ -901,29 +990,52 @@ function App() {
         </div>
         <div className="top-nav-right">
           <label className="theme-toggle">
-          <span className="theme-label">Theme</span>
-          <span className="theme-icons" aria-hidden="true">
-            <span>🌙</span>
-            <span>☀️</span>
-          </span>
-          <input
-            className="theme-toggle-input"
-            type="checkbox"
-            checked={theme === 'light'}
-            onChange={toggleTheme}
-            aria-label="Toggle light mode"
-          />
-          <span className="theme-toggle-track" aria-hidden="true">
-            <span className="theme-toggle-thumb" />
-          </span>
-        </label>
-          {isPracticeMidterm && <PracticeMidtermTimer key={practiceMidtermKey} />}
+            <span className="theme-label">Theme</span>
+            <span className="theme-icons" aria-hidden="true">
+              <span>🌙</span>
+              <span>☀️</span>
+            </span>
+            <input
+              className="theme-toggle-input"
+              type="checkbox"
+              checked={theme === 'light'}
+              onChange={toggleTheme}
+              aria-label="Toggle light mode"
+            />
+            <span className="theme-toggle-track" aria-hidden="true">
+              <span className="theme-toggle-thumb" />
+            </span>
+          </label>
         </div>
       </header>
 
+      {isPracticeMidterm && (
+        <div className="practice-midterm-timer-fixed">
+          <PracticeMidtermTimer
+            key={practiceMidtermKey}
+            initialSeconds={practiceTimerSeconds}
+            externalPaused={practiceExamSubmitted}
+            timerSeconds={timerSeconds}
+            setTimerSeconds={setTimerSeconds}
+            timerDismissed={timerDismissed}
+            setTimerDismissed={setTimerDismissed}
+          />
+        </div>
+      )}
+
       <main className="main-content">
         {isPracticeMidterm ? (
-          <PracticeMidtermPage key={practiceMidtermKey} onRedo={handlePracticeMidtermRedo} />
+          <PracticeMidtermPage
+            key={practiceMidtermKey}
+            questions={isPracticeSemester2 ? PRACTICE_SEMESTER_2_QUESTIONS : isPracticeSemester1 ? PRACTICE_SEMESTER_1_QUESTIONS : isPracticeMidterm2 ? PRACTICE_MIDTERM_2_QUESTIONS : PRACTICE_MIDTERM_QUESTIONS}
+            title={isPracticeSemester2 ? 'Semester 2 Final Practice Exam (Units 9–12)' : isPracticeSemester1 ? 'Semester 1 Practice Exam (Units 2–6)' : isPracticeMidterm2 ? 'Practice Midterm (Units 9, 10 & 11)' : 'Practice Midterm (Units 2 & 3)'}
+            subtitle={(isPracticeSemester1 || isPracticeSemester2) ? '40 multiple choice questions · Each question worth 4 points · 80 minute test (optional timer)' : '30 multiple choice questions · Each question worth 4 points · 60 minute test (optional timer)'}
+            onRedo={handlePracticeMidtermRedo}
+            onSubmitted={() => setPracticeExamSubmitted(true)}
+            showTimerSummary={practiceExamSubmitted && !timerDismissed}
+            timerMinutesSpent={Math.floor((practiceTimerSeconds - timerSeconds) / 60)}
+            timerMinutesLeft={Math.floor(timerSeconds / 60)}
+          />
         ) : isApCsp ? (
           <ApCspPage />
         ) : (
